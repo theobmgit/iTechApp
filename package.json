@@ -1,0 +1,27 @@
+{
+  "name": "itech-app",
+  "version": "1.0.0",
+  "description": "A Database Laboratory course's final project 20202",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theobmgit/iTechApp.git"
+  },
+  "keywords": [],
+  "author": "theobmgit",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/theobmgit/iTechApp/issues"
+  },
+  "homepage": "https://github.com/theobmgit/iTechApp#readme",
+  "dependencies": {
+    "@hapi/hapi": "^20.1.4",
+    "dotenv": "^10.0.0",
+    "fs-extra": "^10.0.0",
+    "msnodesqlv8": "^2.2.0",
+    "mssql": "^7.1.3"
+  }
+}
