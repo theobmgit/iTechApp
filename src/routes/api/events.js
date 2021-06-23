@@ -5,7 +5,7 @@ module.exports.register = async server => {
         method: "GET",
         path: "/api/query",
         config: {
-            handler: async (request, response) => {
+            handler: async (request) => {
                 try {
                     // get the sql client registered as a plugin
                     const db = request.server.plugins.sql.client;
@@ -29,9 +29,13 @@ module.exports.register = async server => {
                 try {
                     const tableName = request.params.tableName;
                     const db = request.server.plugins.sql.client;
-                    const res = await db.events.getTableData(tableName);
+                    const res = await db.events.getTableColumnName(tableName)
+                    const res2 = await db.events.getTableData(tableName);
                     // return the recordset object
-                    return res.recordset;
+                    return {
+                        "column_name": Object.values(res.recordset.map(record => record.COLUMN_NAME)),
+                        "data": res2.recordset
+                    }
                 } catch (err) {
                     console.log(err);
                     return h.response("This table does not exist!").code(500);

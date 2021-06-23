@@ -4,7 +4,9 @@
   "description": "A Database Laboratory course's final project 20202",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "node .",
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,8 @@
   "homepage": "https://github.com/theobmgit/iTechApp#readme",
   "dependencies": {
     "@hapi/hapi": "^20.1.4",
+    "axios": "^0.21.1",
+    "concurrently": "^6.2.0",
     "dotenv": "^10.0.0",
     "fs-extra": "^10.0.0",
     "msnodesqlv8": "^2.2.0",

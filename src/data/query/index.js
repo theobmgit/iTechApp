@@ -24,9 +24,17 @@ const register = async ({sql, getConnection}) => {
         return request.query(query);
     }
 
+    const getTableColumnName = async (tableName) => {
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        const query = sqlQueries.getTableColumnName + "\'" + tableName + "\'";
+        return request.query(query);
+    }
+
     return {
         getTablesName,
-        getTableData
+        getTableData,
+        getTableColumnName
     };
 };
 
