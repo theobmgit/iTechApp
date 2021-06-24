@@ -6,10 +6,9 @@ class NavBar extends React.Component {
             <nav className="navbar navbar-dark bg-dark" style={{marginBottom: 20}}>
                 <div className="container">
                     <a href="/" className="navbar-brand">
-                        <i className="fas fa-sitemap" style={{marginRight: 10, fontSize: 25}}/>
-                        iTech
+                        <h1><i className="fas fa-sitemap" style={{marginRight: 10}}/>  iTech</h1>
                     </a>
-
+                    <p style={{color: "white"}}><small>Technology Data Portal</small></p>
                 </div>
             </nav>
         );

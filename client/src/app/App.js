@@ -7,8 +7,10 @@ function App() {
     return (
         <Router>
             <NavBar/>
-                <Route path="/"><TableSelect/></Route>
-                <Route path="/api/query/"><TableView/></Route>
+            <Switch>
+                <Route exact path="/"><TableSelect/></Route>
+                <Route exact path="/api/query/:tableName"><TableView/></Route>
+            </Switch>
         </Router>
     );
 }

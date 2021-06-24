@@ -4,10 +4,10 @@ import {useSelector} from "react-redux";
 
 export const TableSelect = () => {
     const tables = useSelector(state => state.tables)
-    const selectedTables = useSelector(state => state.tables.filter(table => table.select))
+    const selectedTables = tables.filter(table => table.select).map(table => table.name)
     const handleClick = (e) => {
         e.preventDefault();
-        window.location.href = `/api/query/`
+        window.location.href = `/api/query/${selectedTables[0]}`
     }
     return (
         <div className="container">
