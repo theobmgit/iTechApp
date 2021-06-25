@@ -16,7 +16,7 @@ export const ItemCheckBox = (props) => {
         dispatch({
             type: 'columns/columnSelect',
             payload: {
-                name: props.column
+                column: props.column
             }
         })
     }
@@ -24,7 +24,7 @@ export const ItemCheckBox = (props) => {
     return (
         <div className="form-check">
             <input className="form-check-input me-2" type="checkbox" value="" id="flexCheckDefault"
-                   onClick={() => handleClick()} style={{width: 30, height: 30}}/>
+                   onChange={handleClick} style={{width: 30, height: 30}}/>
             <label className="form-check-label fs-4" htmlFor="flexCheckDefault">
                 <span className="lead">{reformatString(props.column)}</span>
             </label>

@@ -7,9 +7,9 @@ import {ItemCheckBox} from "../components/ItemCheckBox";
 export const ColumnSelect = () => {
     const selectedTables = useSelector(state => state.tables).filter(table => table.select).map(table => table.name)
     const columns = useSelector(state => state.columns).map(column => column.name)
-    const selectedColumns = columns.filter(column => column.select)
     const dispatch = useDispatch()
 
+    console.log(useSelector(state => state.columns).filter(column => column.select))
     useEffect(() => {
         async function fetchData() {
             const result = await apis.getTableColumnName(relation[selectedTables.join("")])

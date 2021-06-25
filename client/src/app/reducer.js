@@ -12,6 +12,8 @@ const initialState = {
 export default function reducer(state = initialState, action) {
     switch (action.type) {
         case 'tables/tableSelect': {
+            if(state.isLoading)
+                return state
             return {
                 ...state,
                 tables: state.tables.map(table => {
@@ -21,7 +23,8 @@ export default function reducer(state = initialState, action) {
                         ...table,
                         select: !table.select
                     }
-                })
+                }),
+                isLoading: true
             }
         }
         case 'columns/columnsLoad': {
@@ -39,7 +42,7 @@ export default function reducer(state = initialState, action) {
             return {
                 ...state,
                 columns: state.columns.map(column => {
-                    if(column !== action.payload.column)
+                    if(column.name !== action.payload.column)
                         return column
                     return {
                         ...column,

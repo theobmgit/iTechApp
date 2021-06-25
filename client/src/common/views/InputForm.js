@@ -6,10 +6,9 @@ import {apis} from "../../api";
 import {ItemCard} from "../components/ItemCard";
 
 export const InputForm = () => {
-    const dispatch = useDispatch()
     const selectedTables = useSelector(state => state.tables).filter(table => table.select).map(table => table.name)
     const columns = useSelector(state => state.columns).map(column => column.name)
-    const selectedColumns = columns.filter(column => column.select)
+    const selectedColumns = useSelector(state => state.columns).filter(column => column.select).map(column => column.name)
 
     const [state, setState] = useState({
         columnInput: {},
@@ -19,16 +18,24 @@ export const InputForm = () => {
         }
     })
 
-    let handleInputChange = (e) => {
-        alert(e)
-        const value = e.target.value
+    let handleChange = (e) => {
         setState({
             ...state,
             columnInput: {
                 ...state.columnInput,
-                [e.target.id]: value
+                [e.target.id]: e.target.value
             }
         })
+    }
+
+    function clean(obj) {
+        let propNames = Object.getOwnPropertyNames(obj);
+        for (let i = 0; i < propNames.length; i++) {
+            let propName = propNames[i];
+            if (obj[propName] === null || obj[propName] === undefined || obj[propName] === "") {
+                delete obj[propName];
+            }
+        }
     }
 
     const handleClickBack = () => {
@@ -36,6 +43,7 @@ export const InputForm = () => {
     }
 
     const handleClickNext = async () => {
+        clean(state.columnInput)
         await apis.getSpecificTableData(relation[selectedTables.join("")], state.columnInput).then(result => {
                 setState({
                     ...state,
@@ -44,9 +52,6 @@ export const InputForm = () => {
                         data: [...result.data.data]
                     }
                 });
-                dispatch({
-                    type: 'isLoading/loaded'
-                })
             }
         );
     };
@@ -56,17 +61,14 @@ export const InputForm = () => {
             <h2 className="fs-1" style={{lineHeight: '70%'}}>Fill in</h2>
             <p className="fs-4">Fill in what you have already known, leave them blank if you have no idea at all</p>
             <form className="row g-3 mb-5">
-                {/*{columns.map(column =>
+                {columns.map(column =>
                     <input type="text" id={column} className="form-control" placeholder={column} aria-label={column}
                            value={state.columnInput[column]}
-                           onChange={() => handleInputChange}
+                           onChange={handleChange}
                     />
-                )}*/}
-                <input type="text" name="technology_name" id="technology_name" className="form-control" placeholder="technology_name"
-                       onChange={() => handleInputChange}
-                />
+                )}
             </form>
-            <div className="d-flex justify-content-end">
+            <div className="d-flex justify-content-end mb-5">
                 <button type="button" className="btn btn-outline-danger btn-lg me-5"
                         onClick={() => handleClickBack()}>Back
                 </button>

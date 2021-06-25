@@ -43,18 +43,36 @@ const register = async ({sql, getConnection}) => {
         const request = await cnx.request();
         const subQuery = "SELECT * FROM " + table1 + " JOIN " + relationTable + " ON " + table1.toLowerCase() + "_id = " + [relationTable.toLowerCase(), table1.toLowerCase(), "id"].join("_") + " JOIN " + table2 + " ON " + [relationTable.toLowerCase(), table2.toLowerCase(), "id"].join("_") + " = " + table2.toLowerCase() + "_id"
         const select = "SELECT * FROM (" + subQuery + ") WHERE "
-        const condition = JSON.stringify(payload).replace("{", "").replaceAll("\"", "").replaceAll(":", "=").replaceAll(",", " AND ")
+        console.log(payload)
+        const condition = JSON.stringify(payload).replace("{", "").replace("}", "").replaceAll("\'", "").replaceAll(":", "= ").replaceAll(",", " AND ")
         const query = select + condition
         console.log(query)
         return request.query(query)
     }
 
     const getSpecificTableData = async (tableName, payload) => {
-        console.log(payload)
         const cnx = await getConnection();
         const request = await cnx.request();
-        const condition = JSON.stringify(payload).replace("{", "").replaceAll("\"", "").replaceAll(":", "=").replaceAll(",", " AND ")
+        /*let payloadNumber = {}
+        const numberProp = ['release_year', 'publications', 'rank', 'market_cap', 'reads', 'citations']
+        numberProp.forEach(prop => {
+            if(prop in payload)
+                payloadNumber[prop] = payload[prop]
+        })
+
+        let propNames = Object.getOwnPropertyNames(obj);
+        for (let i = 0; i < propNames.length; i++) {
+            let propName = propNames[i];
+            if (obj[propName] === null || obj[propName] === undefined || obj[propName] === "") {
+                delete obj[propName];
+            }
+        }*/
+
+        const condition = JSON.stringify(payload).split(',').map(str =>
+            str.replace(":", " = ").replace("\"", "").replace("\"", "").replace("\"", "\'").replace("\"", "\'"))
+            .join(" AND ").replace("{", "").replace("}", "")
         const query = "SELECT * FROM " + tableName + " WHERE " + condition
+        console.log(query)
         return request.query(query)
     }
 
