@@ -12,8 +12,6 @@ const initialState = {
 export default function reducer(state = initialState, action) {
     switch (action.type) {
         case 'tables/tableSelect': {
-            if(state.isLoading)
-                return state
             return {
                 ...state,
                 tables: state.tables.map(table => {

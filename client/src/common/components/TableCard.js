@@ -22,7 +22,7 @@ export const TableCard = (props) => {
             <div className="card-body">
                 <h2 className="card-title">{props.table.tableName}</h2>
                 <p className="card-text">{description[props.table.tableName]}</p>
-                <button type="button" className="btn btn-primary" onClick={() => handleClick()}>Select</button>
+                <button type="button" className="btn btn-primary" onClick={handleClick}>Select</button>
             </div>
         </div>
     );

@@ -38,14 +38,37 @@ const register = async ({sql, getConnection}) => {
         return request.query(query)
     }
 
-    const getSpecificJoinedTableData = async (table, table2, relationTable, payload) => {
+    const getSpecificJoinedTableData = async (table1, table2, relationTable, payload) => {
         const cnx = await getConnection();
         const request = await cnx.request();
-        const subQuery = "SELECT * FROM " + table1 + " JOIN " + relationTable + " ON " + table1.toLowerCase() + "_id = " + [relationTable.toLowerCase(), table1.toLowerCase(), "id"].join("_") + " JOIN " + table2 + " ON " + [relationTable.toLowerCase(), table2.toLowerCase(), "id"].join("_") + " = " + table2.toLowerCase() + "_id"
-        const select = "SELECT * FROM (" + subQuery + ") WHERE "
-        console.log(payload)
-        const condition = JSON.stringify(payload).replace("{", "").replace("}", "").replaceAll("\'", "").replaceAll(":", "= ").replaceAll(",", " AND ")
-        const query = select + condition
+        const subQuery = "SELECT * FROM " + "( " + table1 + " JOIN " + relationTable + " ON " + table1.toLowerCase() + "_id = " + [relationTable.toLowerCase(), table1.toLowerCase(), "id"].join("_") + " JOIN " + table2 + " ON " + [relationTable.toLowerCase(), table2.toLowerCase(), "id"].join("_") + " = " + table2.toLowerCase() + "_id" + " )"
+        let payloadNumber = {}
+        const numberProp = ['release_year', 'publications', 'rank', 'market_cap', 'reads', 'citations']
+        numberProp.forEach(prop => {
+            if ([prop] in payload) {
+                if (payload[prop].toLowerCase().includes("between"))
+                    payloadNumber[prop] = payload[prop]
+                else payloadNumber[prop] = parseInt(payload[prop])
+                delete payload[prop]
+            }
+        })
+
+        const condition = JSON.stringify(payload).split(',').map(str =>
+            str.split(":").map((tmp, index) => {
+                if (index === 0)
+                    return tmp.replace(/"/g, "")
+                else return " LIKE \'%" + tmp.replace(/"/g, "") + "%\'"
+            }).join(" "))
+            .join(" AND ").replace("{", "").replace("}", "")
+
+        const conditionNumber = JSON.stringify(payloadNumber).split(',').map(str => {
+            console.log(str)
+            if (str.toLowerCase().includes("between"))
+                return str.replace(":", " ").replace(/"/g, "")
+            else return str.replace(":", " = ").replace(/"/g, "")
+        }).join(" AND ").replace("{", "").replace("}", "")
+
+        const query = subQuery + " WHERE " + [condition, conditionNumber].filter(str => str.length > 2).join(" AND ")
         console.log(query)
         return request.query(query)
     }
@@ -53,25 +76,33 @@ const register = async ({sql, getConnection}) => {
     const getSpecificTableData = async (tableName, payload) => {
         const cnx = await getConnection();
         const request = await cnx.request();
-        /*let payloadNumber = {}
+        let payloadNumber = {}
         const numberProp = ['release_year', 'publications', 'rank', 'market_cap', 'reads', 'citations']
         numberProp.forEach(prop => {
-            if(prop in payload)
-                payloadNumber[prop] = payload[prop]
+            if ([prop] in payload) {
+                if (payload[prop].toLowerCase().includes("between"))
+                    payloadNumber[prop] = payload[prop]
+                else payloadNumber[prop] = parseInt(payload[prop])
+                delete payload[prop]
+            }
         })
 
-        let propNames = Object.getOwnPropertyNames(obj);
-        for (let i = 0; i < propNames.length; i++) {
-            let propName = propNames[i];
-            if (obj[propName] === null || obj[propName] === undefined || obj[propName] === "") {
-                delete obj[propName];
-            }
-        }*/
-
         const condition = JSON.stringify(payload).split(',').map(str =>
-            str.replace(":", " = ").replace("\"", "").replace("\"", "").replace("\"", "\'").replace("\"", "\'"))
+            str.split(":").map((tmp, index) => {
+                if (index === 0)
+                    return tmp.replace(/"/g, "")
+                else return " LIKE \'%" + tmp.replace(/"/g, "") + "%\'"
+            }).join(" "))
             .join(" AND ").replace("{", "").replace("}", "")
-        const query = "SELECT * FROM " + tableName + " WHERE " + condition
+
+        const conditionNumber = JSON.stringify(payloadNumber).split(',').map(str => {
+            console.log(str)
+            if (str.toLowerCase().includes("between"))
+                return str.replace(":", " ").replace(/"/g, "")
+            else return str.replace(":", " = ").replace(/"/g, "")
+        }).join(" AND ").replace("{", "").replace("}", "")
+
+        const query = "SELECT * FROM " + tableName + " WHERE " + [condition, conditionNumber].filter(str => str.length > 2).join(" AND ")
         console.log(query)
         return request.query(query)
     }

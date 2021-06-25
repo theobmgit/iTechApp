@@ -7,6 +7,7 @@ export const TableSelect = () => {
     const tables = useSelector(state => state.tables)
     const selectedTables = tables.filter(table => table.select).map(table => table.name)
 
+    console.log(selectedTables)
     const handleClickNext = (e) => {
         e.preventDefault();
         window.location.href = `/api/query/${relation[selectedTables.join("")]}/select`

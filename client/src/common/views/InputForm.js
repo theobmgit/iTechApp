@@ -1,6 +1,6 @@
 // TODO: add input form features
 import React, {useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {relation} from "../resources/data/relation";
 import {apis} from "../../api";
 import {ItemCard} from "../components/ItemCard";
@@ -61,7 +61,7 @@ export const InputForm = () => {
             <h2 className="fs-1" style={{lineHeight: '70%'}}>Fill in</h2>
             <p className="fs-4">Fill in what you have already known, leave them blank if you have no idea at all</p>
             <form className="row g-3 mb-5">
-                {columns.map(column =>
+                {columns.filter(column => column !== 'reference_image' && column !== 'link').map(column =>
                     <input type="text" id={column} className="form-control" placeholder={column} aria-label={column}
                            value={state.columnInput[column]}
                            onChange={handleChange}
@@ -77,6 +77,9 @@ export const InputForm = () => {
                 </button>
             </div>
             <div className="container">
+                <div className="row">
+                    <h2 className="fs-1">Results:</h2>
+                </div>
                 <div className="row">
                     {state.data.data.map(value => <ItemCard name={value.name} column={selectedColumns} data={value}/>)}
                 </div>
