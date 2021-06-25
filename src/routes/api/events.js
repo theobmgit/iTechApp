@@ -75,4 +75,40 @@ module.exports.register = async server => {
             }
         }
     });
+
+    server.route({
+            method: "POST",
+            path: "/api/query/{tableName}",
+            config: {
+                handler: async (request, h) => {
+                    try {
+                        const tableName = request.params.tableName;
+                        const payload = request.payload
+                        const selectedTables = relation[tableName]
+                        const db = request.server.plugins.sql.client;
+
+                        let res = []
+                        for (let i = 0; i < selectedTables.length; i++) {
+                            const data = await db.events.getTableColumnName(selectedTables[i])
+                            res = [...res, ...data.recordset]
+                        }
+
+                        let res2
+                        if (selectedTables.length === 1)
+                            res2 = await db.events.getSpecificTableData(selectedTables[0], payload)
+                        else res2 = await db.events.getSpecificJoinedTableData(selectedTables[0], selectedTables[1], tableName, payload)
+
+                        // return the recordset object
+                        return {
+                            "column_name": Object.values(res.map(record => record.COLUMN_NAME)),
+                            "data": res2.recordset
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        return h.response("This table does not exist!").code(500);
+                    }
+                }
+            }
+        }
+    )
 };

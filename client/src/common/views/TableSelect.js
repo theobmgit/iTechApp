@@ -1,6 +1,7 @@
 import React from "react";
 import TableCard from "../components/TableCard";
 import {useSelector} from "react-redux";
+import {relation} from "../resources/data/relation";
 
 export const TableSelect = () => {
     const tables = useSelector(state => state.tables)
@@ -8,12 +9,12 @@ export const TableSelect = () => {
 
     const handleClickNext = (e) => {
         e.preventDefault();
-        window.location.href = `/api/query/${selectedTables[0]}/select`
+        window.location.href = `/api/query/${relation[selectedTables.join("")]}/select`
     }
 
     const handleClickViewAll = (e) => {
         e.preventDefault();
-        window.location.href = `/api/query/${selectedTables[0]}`
+        window.location.href = `/api/query/${relation[selectedTables.join("")]}`
     }
 
     const disableViewALll = !(selectedTables.length > 0 && selectedTables.length < 3)

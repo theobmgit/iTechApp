@@ -29,10 +29,8 @@ export const ColumnSelect = () => {
     }
 
     function handleClickNext() {
-        window.location.href = `/api/query/${selectedTables[0]}/input`
+        window.location.href = `/api/query/${relation[selectedTables.join("")]}/input`
     }
-
-    const disabledNext = selectedColumns.length < 1
 
     return (
         <div className="container w-75">
@@ -48,7 +46,7 @@ export const ColumnSelect = () => {
                 <button type="button" className="btn btn-outline-danger btn-lg me-5"
                         onClick={() => handleClickBack()}>Back
                 </button>
-                <button type="button" className="btn btn-primary btn-lg" disabled={disabledNext}
+                <button type="button" className="btn btn-primary btn-lg"
                         onClick={() => handleClickNext()}>Next
                 </button>
             </div>

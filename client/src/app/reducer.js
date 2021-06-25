@@ -4,7 +4,9 @@ const initialState = {
     tables: tableList.map(value => {
         return {name: value, select: false, visibility: true}
     }),
-    columns: []
+    columns: [],
+    isLoading: false,
+    data: {}
 }
 
 export default function reducer(state = initialState, action) {
@@ -44,6 +46,18 @@ export default function reducer(state = initialState, action) {
                         select: !column.select
                     }
                 })
+            }
+        }
+        case 'isLoading/loaded': {
+            return {
+                ...state,
+                isLoading: true
+            }
+        }
+        case 'data/formSent': {
+            return {
+                ...state,
+                data: action.payload.data
             }
         }
         default:

@@ -1,31 +1,84 @@
 // TODO: add input form features
-import React from "react";
-import {store} from "../../app/store";
-import {apis} from "../../api";
+import React, {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
 import {relation} from "../resources/data/relation";
+import {apis} from "../../api";
+import {ItemCard} from "../components/ItemCard";
 
-export class InputForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+export const InputForm = () => {
+    const dispatch = useDispatch()
+    const selectedTables = useSelector(state => state.tables).filter(table => table.select).map(table => table.name)
+    const columns = useSelector(state => state.columns).map(column => column.name)
+    const selectedColumns = columns.filter(column => column.select)
+
+    const [state, setState] = useState({
+        columnInput: {},
+        data: {
             columns: [],
             data: []
         }
-    }
+    })
 
-    componentDidMount = async () => {
-        const selectedTablesArr = store.getState().tables.filter(table => table.select).map(table => table.name)
-        const selectedTables = selectedTablesArr.join("")
-        await apis.getTableColumnName(relation[selectedTables]).then(result => {
-            this.setState({
-                columns: [...result.data.column_name]
-            })
+    let handleInputChange = (e) => {
+        alert(e)
+        const value = e.target.value
+        setState({
+            ...state,
+            columnInput: {
+                ...state.columnInput,
+                [e.target.id]: value
+            }
         })
     }
 
-    render() {
-        return (
-            <div/>
-        )
+    const handleClickBack = () => {
+        window.location.href = `/api/query/${relation[selectedTables.join("")]}/select`
     }
+
+    const handleClickNext = async () => {
+        await apis.getSpecificTableData(relation[selectedTables.join("")], state.columnInput).then(result => {
+                setState({
+                    ...state,
+                    data: {
+                        columns: [...result.data.column_name],
+                        data: [...result.data.data]
+                    }
+                });
+                dispatch({
+                    type: 'isLoading/loaded'
+                })
+            }
+        );
+    };
+
+    return (
+        <div className="container">
+            <h2 className="fs-1" style={{lineHeight: '70%'}}>Fill in</h2>
+            <p className="fs-4">Fill in what you have already known, leave them blank if you have no idea at all</p>
+            <form className="row g-3 mb-5">
+                {/*{columns.map(column =>
+                    <input type="text" id={column} className="form-control" placeholder={column} aria-label={column}
+                           value={state.columnInput[column]}
+                           onChange={() => handleInputChange}
+                    />
+                )}*/}
+                <input type="text" name="technology_name" id="technology_name" className="form-control" placeholder="technology_name"
+                       onChange={() => handleInputChange}
+                />
+            </form>
+            <div className="d-flex justify-content-end">
+                <button type="button" className="btn btn-outline-danger btn-lg me-5"
+                        onClick={() => handleClickBack()}>Back
+                </button>
+                <button type="button" className="btn btn-primary btn-lg"
+                        onClick={() => handleClickNext()}>Next
+                </button>
+            </div>
+            <div className="container">
+                <div className="row">
+                    {state.data.data.map(value => <ItemCard name={value.name} column={selectedColumns} data={value}/>)}
+                </div>
+            </div>
+        </div>
+    )
 }

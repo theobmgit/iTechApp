@@ -38,16 +38,33 @@ const register = async ({sql, getConnection}) => {
         return request.query(query)
     }
 
-    const getSpecificTableData = async (tableName, payload) => {
+    const getSpecificJoinedTableData = async (table, table2, relationTable, payload) => {
         const cnx = await getConnection();
         const request = await cnx.request();
+        const subQuery = "SELECT * FROM " + table1 + " JOIN " + relationTable + " ON " + table1.toLowerCase() + "_id = " + [relationTable.toLowerCase(), table1.toLowerCase(), "id"].join("_") + " JOIN " + table2 + " ON " + [relationTable.toLowerCase(), table2.toLowerCase(), "id"].join("_") + " = " + table2.toLowerCase() + "_id"
+        const select = "SELECT * FROM (" + subQuery + ") WHERE "
+        const condition = JSON.stringify(payload).replace("{", "").replaceAll("\"", "").replaceAll(":", "=").replaceAll(",", " AND ")
+        const query = select + condition
+        console.log(query)
+        return request.query(query)
+    }
+
+    const getSpecificTableData = async (tableName, payload) => {
+        console.log(payload)
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        const condition = JSON.stringify(payload).replace("{", "").replaceAll("\"", "").replaceAll(":", "=").replaceAll(",", " AND ")
+        const query = "SELECT * FROM " + tableName + " WHERE " + condition
+        return request.query(query)
     }
 
     return {
         getTablesName,
         getTableData,
         getTableColumnName,
-        getJoinedTableData
+        getJoinedTableData,
+        getSpecificJoinedTableData,
+        getSpecificTableData
     };
 };
 
