@@ -31,10 +31,23 @@ const register = async ({sql, getConnection}) => {
         return request.query(query);
     }
 
+    const getJoinedTableData = async (table1, table2, relationTable) => {
+        const cnx = await getConnection();
+        const request = await cnx.request();
+        const query = "SELECT * FROM " + table1 + " JOIN " + relationTable + " ON " + table1.toLowerCase() + "_id = " + [relationTable.toLowerCase(), table1.toLowerCase(), "id"].join("_") + " JOIN " + table2 + " ON " + [relationTable.toLowerCase(), table2.toLowerCase(), "id"].join("_") + " = " + table2.toLowerCase() + "_id"
+        return request.query(query)
+    }
+
+    const getSpecificTableData = async (tableName, payload) => {
+        const cnx = await getConnection();
+        const request = await cnx.request();
+    }
+
     return {
         getTablesName,
         getTableData,
-        getTableColumnName
+        getTableColumnName,
+        getJoinedTableData
     };
 };
 

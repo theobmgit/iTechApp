@@ -1,5 +1,6 @@
 import React from "react";
 import {useDispatch} from "react-redux";
+import {description} from "../resources/data/description";
 
 export const TableCard = (props) => {
     const dispatch = useDispatch()
@@ -16,12 +17,11 @@ export const TableCard = (props) => {
     const cardClassName = props.table.select ? "bg-warning" : "bg-light"
     const imgPath = "https://husteduvn-my.sharepoint.com/personal/tu_bm194870_sis_hust_edu_vn/Documents/resources/img/" + props.table.tableName + ".jpg";
     return (
-        <div className={"card " + cardClassName}>
+        <div className={"card " + cardClassName} style={{height: '25rem'}}>
             <img src={imgPath} className="card-img-top" key={Date.now()} alt={props.table.tableName}/>
             <div className="card-body">
                 <h2 className="card-title">{props.table.tableName}</h2>
-                <p className="card-text">Some quick example text to build on the card title and make up the bulk
-                    of the card's content.</p>
+                <p className="card-text">{description[props.table.tableName]}</p>
                 <button type="button" className="btn btn-primary" onClick={() => handleClick()}>Select</button>
             </div>
         </div>

@@ -5,12 +5,24 @@ import {useSelector} from "react-redux";
 export const TableSelect = () => {
     const tables = useSelector(state => state.tables)
     const selectedTables = tables.filter(table => table.select).map(table => table.name)
-    const handleClick = (e) => {
+
+    const handleClickNext = (e) => {
+        e.preventDefault();
+        window.location.href = `/api/query/${selectedTables[0]}/select`
+    }
+
+    const handleClickViewAll = (e) => {
         e.preventDefault();
         window.location.href = `/api/query/${selectedTables[0]}`
     }
+
+    const disableViewALll = !(selectedTables.length > 0 && selectedTables.length < 3)
+    const disableNext = selectedTables.length === 0
+
     return (
         <div className="container">
+            <h2 className="fs-1" style={{lineHeight: '70%'}}>Select tables</h2>
+            <p className="fs-4">Choose what you are interested in</p>
             <div className="row mb-5">
                 {tables.map(value =>
                     <div key={value.name} className="col">
@@ -23,8 +35,11 @@ export const TableSelect = () => {
                 )}
             </div>
             <div className="d-flex justify-content-end">
-                <button type="button" className="btn btn-primary btn-lg"
-                        onClick={(e) => handleClick(e)}>Next
+                <button type="button" className="btn btn-outline-primary btn-lg me-5" disabled={disableViewALll}
+                        onClick={(e) => handleClickViewAll(e)}>View All
+                </button>
+                <button type="button" className="btn btn-primary btn-lg" disabled={disableNext}
+                        onClick={(e) => handleClickNext(e)}>Next
                 </button>
             </div>
         </div>
